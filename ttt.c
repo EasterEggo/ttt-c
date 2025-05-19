@@ -59,7 +59,7 @@ int checkPosition(int pos[2]) {
 }
 int checkWin(Board BOARD) {
   int i;
-  // diagonais
+    // diagonais
   if (getid(brd, 0, 0) + getid(brd, 1, 1) + getid(brd, 2, 2) == 6) {
     printf("O wins");
     return 1;
@@ -68,8 +68,10 @@ int checkWin(Board BOARD) {
     return 1;
   } else if (getid(brd, 2, 0) + getid(brd, 1, 1) + getid(brd, 0, 2) == 15) {
     printf("X wins");
+    return 1;
   } else if (getid(brd, 2, 0) + getid(brd, 1, 1) + getid(brd, 0, 2) == 6) {
     printf("O wins");
+    return 1;
   }
   for (i = 0; i < 3; i++) {
     // linhas
