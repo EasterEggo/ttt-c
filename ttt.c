@@ -10,7 +10,7 @@ typedef struct board {
 int newBoard(Board BOARD);
 int printBoard(Board BOARD);
 int checkPosition(int pos[2]);
-int checkWin(Board BOARD, bool checker);
+int checkWin(Board BOARD);
 int setid(Board BOARD, int pos[2], int id);
 int getid(Board BOARD, int col, int lin);
 int insert(Board BOARD, int ox, int pos[2]);
@@ -57,7 +57,7 @@ int checkPosition(int pos[2]) {
   }
   return 0;
 }
-int checkWin(Board BOARD, bool checker) {
+int checkWin(Board BOARD) {
   int i;
   // diagonais
   if (getid(brd, 0, 0) + getid(brd, 1, 1) + getid(brd, 2, 2) == 6) {
@@ -107,7 +107,6 @@ int insert(Board BOARD, int ox, int pos[2]) {
 int initGame() {
   Board board[MAX_Y][MAX_X];
   int play[2];
-  bool checker = false;
   int turn;
   newBoard(board);
   while (true) {
@@ -125,7 +124,7 @@ int initGame() {
     if (insert(board, turn, play) == 1) {
       printf("[ERRO!]Posição Invalida - Tente Novamente\n");
     } else {
-      if (checkWin(board, checker) == 1)
+      if (checkWin(board) == 1)
         break;
       turn = !turn;
     }
