@@ -14,6 +14,7 @@ int checkWin(Board BOARD);
 int setid(Board BOARD, int pos[2], int id);
 int getid(Board BOARD, int col, int lin);
 int insert(Board BOARD, int ox, int pos[2]);
+int fd_zero(Board BOARD);
 int initGame();
 
 int main() {
@@ -26,7 +27,19 @@ int setid(Board BOARD, int pos[2], int id) {
   return 0;
 }
 int getid(Board BOARD, int col, int lin) { return brd[lin][col].id; }
-
+int fd_zero(Board BOARD) {
+	int i,j;
+	for(i = 0; i < MAX_Y; i++){
+		for(j=0; j < MAX_X; j++) {
+			if(brd[i][j].id == 0) {
+				return 1;
+			} else {
+				continue;
+			}
+		}
+	}
+	return 0;
+}
 int newBoard(Board BOARD) {
   int i, j;
   for (i = 0; i < MAX_Y; i++) {
@@ -40,12 +53,14 @@ int newBoard(Board BOARD) {
 
 int printBoard(Board BOARD) {
   int i, j;
+  printf("-------\n");
   for (i = 0; i < MAX_Y; i++) {
     for (j = 0; j < MAX_X; j++) {
       printf("%2d", brd[i][j].id);
     }
     printf("\n");
   }
+  printf("-------\n");
   return 0;
 }
 
@@ -61,36 +76,30 @@ int checkWin(Board BOARD) {
   int i;
     // diagonais
   if (getid(brd, 0, 0) + getid(brd, 1, 1) + getid(brd, 2, 2) == 6) {
-    printf("O wins");
     return 1;
   } else if (getid(brd, 0, 0) + getid(brd, 1, 1) + getid(brd, 2, 2) == 15) {
-    printf("X wins");
-    return 1;
+    return 2;
   } else if (getid(brd, 2, 0) + getid(brd, 1, 1) + getid(brd, 0, 2) == 15) {
-    printf("X wins");
-    return 1;
+    return 2;
   } else if (getid(brd, 2, 0) + getid(brd, 1, 1) + getid(brd, 0, 2) == 6) {
-    printf("O wins");
     return 1;
   }
   for (i = 0; i < 3; i++) {
     // linhas
     if (getid(brd, i, 0) + getid(brd, i, 1) + getid(brd, i, 2) == 6) {
-      printf("O wins");
       return 1;
     } else if (getid(brd, i, 0) + getid(brd, i, 1) + getid(brd, i, 2) == 15) {
-      printf("X wins");
-      return 1;
+      return 2;
       // colunas
     } else if (getid(brd, 0, i) + getid(brd, 1, i) + getid(brd, 2, i) == 6) {
-      printf("O wins");
       return 1;
     } else if (getid(brd, 0, i) + getid(brd, 1, i) + getid(brd, 2, i) == 15) {
-      printf("X wins");
-      return 1;
+      return 2;
     }
   }
-
+  if(fd_zero(brd) == 0) {
+	  return 3;
+  }
   return 0;
 }
 
@@ -110,8 +119,9 @@ int initGame() {
   Board board[MAX_Y][MAX_X];
   int play[2];
   int turn;
+  bool check = true;
   newBoard(board);
-  while (true) {
+  while (check == true) {
     if (turn == false) {
       printf("Vez do X\n");
     } else {
@@ -124,10 +134,24 @@ int initGame() {
     play[0] -= 1;
     play[1] -= 1;
     if (insert(board, turn, play) == 1) {
-      printf("[ERRO!]Posição Invalida - Tente Novamente\n");
+      printf("[ERRO!]PosiÃ§Ã£o Invalida - Tente Novamente\n");
     } else {
-      if (checkWin(board) == 1)
-        break;
+      switch(checkWin(board)){
+      	case 1:
+      		printf("Player 2 wins!\n");
+      		check = false;
+      		break;
+    	case 2:
+    		printf("player 1 wins!\n");
+    		check = false;
+    		break;
+    	case 3:
+    		printf("Draw\n");
+    		check = false;
+    		break;
+    	default:
+    		break;
+	  }
       turn = !turn;
     }
     printBoard(board);
