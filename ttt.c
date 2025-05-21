@@ -1,5 +1,10 @@
 #include <stdbool.h>
 #include <stdio.h>
+#define ERROR_MSG "\e[0;31mERRO\e[0m"
+#define GRN "\e[0;32m"
+#define YEL "\e[0;33m"
+#define BWHT "\e[1;37m"
+#define COLOR_RESET "\e[0m"
 #define MAX_Y 3
 #define MAX_X 3
 #define BOARD (brd[MAX_Y][MAX_X])
@@ -7,17 +12,35 @@ typedef struct board {
   bool lock;
   int id; // 0: empty; 5: X; 2: O
 } Board;
+
+char charX;
+char charO;
+char charE = '#';
+
 int newBoard(Board BOARD);
 int printBoard(Board BOARD);
 int checkPosition(int pos[2]);
 int checkWin(Board BOARD);
 int setid(Board BOARD, int pos[2], int id);
 int getid(Board BOARD, int col, int lin);
-int insert(Board BOARD, int ox, int pos[2]);
+int insert(Board BOARD, bool ox, int pos[2]);
 int fd_zero(Board BOARD);
 int initGame();
 
+int getskins(){
+  printf("Digite uma letra para representar o "BWHT"Jogador 1: "COLOR_RESET);
+  scanf("%s", &charX);
+  printf("Digite uma letra para representar o "BWHT"Jogador 2: "COLOR_RESET);
+  scanf("%s", &charO);  
+  if ((charO == charE) || (charX == charE) || (charO ==  charX)) {
+    return 1;
+  }
+  return 0;
+}
 int main() {
+  printf("---------------------\n");
+  printf(GRN"    Jogo da Velha    \n"COLOR_RESET);
+  printf("---------------------\n");
   initGame();
   return 0;
 }
@@ -56,7 +79,10 @@ int printBoard(Board BOARD) {
   printf("-------\n");
   for (i = 0; i < MAX_Y; i++) {
     for (j = 0; j < MAX_X; j++) {
-      printf("%2d", brd[i][j].id);
+      if (brd[i][j].id != 0)
+        printf("%2c", brd[i][j].id == 5 ? charX : charO);
+      else
+        printf("%2c", '#');
     }
     printf("\n");
   }
@@ -103,7 +129,7 @@ int checkWin(Board BOARD) {
   return 0;
 }
 
-int insert(Board BOARD, int ox, int pos[2]) {
+int insert(Board BOARD, bool ox, int pos[2]) {
   if (brd[pos[0]][pos[1]].lock == true || checkPosition(pos) == 1) {
     return 1;
   } else {
@@ -120,12 +146,15 @@ int initGame() {
   int play[2];
   int turn;
   bool check = true;
+  while (getskins() == 1){
+    printf("["ERROR_MSG"]""Letra Inválida - Tente Novamente\n");
+  }
   newBoard(board);
-  while (check == true) {
-    if (turn == false) {
-      printf("Vez do X\n");
+  while (check) {
+    if (turn) {
+      printf("Vez do %c\n", charO);
     } else {
-      printf("Vez do O\n");
+      printf("Vez do %c\n", charX);
     }
     printf("digite a linha:");
     scanf("%d", &play[0]);
@@ -134,15 +163,15 @@ int initGame() {
     play[0] -= 1;
     play[1] -= 1;
     if (insert(board, turn, play) == 1) {
-      printf("[ERRO!]PosiÃ§Ã£o Invalida - Tente Novamente\n");
+      printf("["ERROR_MSG"]""Posição Inválida - Tente Novamente\n");
     } else {
       switch(checkWin(board)){
       	case 1:
-      		printf("Player 2 wins!\n");
+      		printf("%c wins!\n", charO);
       		check = false;
       		break;
     	case 2:
-    		printf("player 1 wins!\n");
+    		printf("%c wins!\n", charX);
     		check = false;
     		break;
     	case 3:
