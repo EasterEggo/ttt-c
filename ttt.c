@@ -17,29 +17,19 @@ char charX;
 char charO;
 char charE = '#';
 
+int getid(Board BOARD, int col, int lin);
+int setid(Board BOARD, int pos[2], int id);
+int fd_zero(Board BOARD);
 int newBoard(Board BOARD);
 int printBoard(Board BOARD);
 int checkPosition(int pos[2]);
 int checkWin(Board BOARD);
-int setid(Board BOARD, int pos[2], int id);
-int getid(Board BOARD, int col, int lin);
 int insert(Board BOARD, bool ox, int pos[2]);
-int fd_zero(Board BOARD);
 int initGame();
 
-int getskins(){
-  printf("Digite uma letra para representar o "BWHT"Jogador 1: "COLOR_RESET);
-  scanf("%s", &charX);
-  printf("Digite uma letra para representar o "BWHT"Jogador 2: "COLOR_RESET);
-  scanf("%s", &charO);  
-  if ((charO == charE) || (charX == charE) || (charO ==  charX)) {
-    return 1;
-  }
-  return 0;
-}
 int main() {
   printf("---------------------\n");
-  printf(GRN"    Jogo da Velha    \n"COLOR_RESET);
+  printf(GRN "    Jogo da Velha    \n" COLOR_RESET);
   printf("---------------------\n");
   initGame();
   return 0;
@@ -51,17 +41,27 @@ int setid(Board BOARD, int pos[2], int id) {
 }
 int getid(Board BOARD, int col, int lin) { return brd[lin][col].id; }
 int fd_zero(Board BOARD) {
-	int i,j;
-	for(i = 0; i < MAX_Y; i++){
-		for(j=0; j < MAX_X; j++) {
-			if(brd[i][j].id == 0) {
-				return 1;
-			} else {
-				continue;
-			}
-		}
-	}
-	return 0;
+  int i, j;
+  for (i = 0; i < MAX_Y; i++) {
+    for (j = 0; j < MAX_X; j++) {
+      if (brd[i][j].id == 0) {
+        return 1;
+      } else {
+        continue;
+      }
+    }
+  }
+  return 0;
+}
+int getskins() {
+  printf("Digite uma letra para representar o " BWHT "Jogador 1: " COLOR_RESET);
+  scanf("%s", &charX);
+  printf("Digite uma letra para representar o " BWHT "Jogador 2: " COLOR_RESET);
+  scanf("%s", &charO);
+  if ((charO == charE) || (charX == charE) || (charO == charX)) {
+    return 1;
+  }
+  return 0;
 }
 int newBoard(Board BOARD) {
   int i, j;
@@ -100,7 +100,7 @@ int checkPosition(int pos[2]) {
 }
 int checkWin(Board BOARD) {
   int i;
-    // diagonais
+  // diagonais
   if (getid(brd, 0, 0) + getid(brd, 1, 1) + getid(brd, 2, 2) == 6) {
     return 1;
   } else if (getid(brd, 0, 0) + getid(brd, 1, 1) + getid(brd, 2, 2) == 15) {
@@ -123,8 +123,8 @@ int checkWin(Board BOARD) {
       return 2;
     }
   }
-  if(fd_zero(brd) == 0) {
-	  return 3;
+  if (fd_zero(brd) == 0) {
+    return 3;
   }
   return 0;
 }
@@ -146,8 +146,9 @@ int initGame() {
   int play[2];
   int turn;
   bool check = true;
-  while (getskins() == 1){
-    printf("["ERROR_MSG"]""Letra Inválida - Tente Novamente\n");
+  while (getskins() == 1) {
+    printf("[" ERROR_MSG "]"
+           "Letra Inválida - Tente Novamente\n");
   }
   newBoard(board);
   while (check) {
@@ -163,24 +164,25 @@ int initGame() {
     play[0] -= 1;
     play[1] -= 1;
     if (insert(board, turn, play) == 1) {
-      printf("["ERROR_MSG"]""Posição Inválida - Tente Novamente\n");
+      printf("[" ERROR_MSG "]"
+             "Posição Inválida - Tente Novamente\n");
     } else {
-      switch(checkWin(board)){
-      	case 1:
-      		printf("%c wins!\n", charO);
-      		check = false;
-      		break;
-    	case 2:
-    		printf("%c wins!\n", charX);
-    		check = false;
-    		break;
-    	case 3:
-    		printf("Draw\n");
-    		check = false;
-    		break;
-    	default:
-    		break;
-	  }
+      switch (checkWin(board)) {
+      case 1:
+        printf("%c wins!\n", charO);
+        check = false;
+        break;
+      case 2:
+        printf("%c wins!\n", charX);
+        check = false;
+        break;
+      case 3:
+        printf("Draw\n");
+        check = false;
+        break;
+      default:
+        break;
+      }
       turn = !turn;
     }
     printBoard(board);
